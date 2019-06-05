@@ -104,11 +104,7 @@ spec:
               key: secret-key
         {{- end }}
         - name: MINIO_BROWSER
-          {{- if .Values.disableWebUI }}
-          value: "off"
-          {{- else }}
-          value: "on"
-          {{- end }}
+          value: {{ ternary "off" "on" .Values.disableWebUI | quote }}
 {{- if .Values.extraEnv }}
 {{ toYaml .Values.extraEnv | indent 8 }}
 {{- end }}
@@ -162,8 +158,8 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "minio.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-      {{- if .Values.persistence.podAnnotations }}
-      annotations: {{ toYaml .Values.persistence.podAnnotations | nindent 8 }}
+      {{- if .Values.persistence.annotations }}
+      annotations: {{ toYaml .Values.persistence.annotations | nindent 8 }}
       {{- end }}
     spec:
       accessModes: {{ toYaml .Values.persistence.accessModes | nindent 8 }}
